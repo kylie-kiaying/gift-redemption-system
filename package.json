@@ -1,0 +1,28 @@
+{
+  "name": "govtech-take-home",
+  "version": "1.0.0",
+  "description": "## Assumptions: Redemption eligibility is determined by the current year's season; once a team redeems a gift, they cannot do so again until the next season.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kylie-kiaying/govtech-takehome-2024.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kylie-kiaying/govtech-takehome-2024/issues"
+  },
+  "homepage": "https://github.com/kylie-kiaying/govtech-takehome-2024#readme",
+  "dependencies": {
+    "csv-parse": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
