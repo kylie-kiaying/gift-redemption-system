@@ -1,9 +1,22 @@
-import { readCsvFile } from './utils/csvReader';
+import express from 'express';
+import { StaffService } from './services/StaffService';
 
-const filePath = 'data/staff-id-to-team-mapping.csv';
+const app = express();
+const port = 3000;
 
-readCsvFile(filePath).then((records) => {
-  console.log(records);
-}).catch((error) => {
-  console.error('Error reading CSV file:', error);
+const staffService = new StaffService('data/test-staff-id-to-team.csv');
+
+app.get('/test/:staffId', async (req: Request, res: Response) => {
+  const staffId = req.params.staffId;
+  const teamName = await staffService.getTeamNameByStaffId(staffId);
+
+  if (teamName) {
+    res.send(`Team Name: ${teamName}`);
+  } else {
+    res.status(404).send('Staff ID not found.');
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
