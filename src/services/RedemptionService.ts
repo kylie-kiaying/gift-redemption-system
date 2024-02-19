@@ -18,4 +18,9 @@ export class RedemptionService {
       console.log(`Team ${teamName} has already redeemed their gift.`);
     }
   }
+
+  // Method to clear the redemption records - mainly for testing
+  public clearRedemptions() {
+    this.redemptionRecords = [];
+  }
 }
