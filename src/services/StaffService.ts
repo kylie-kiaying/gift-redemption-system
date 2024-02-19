@@ -4,11 +4,9 @@ import { readCsvFile } from '../utils/csvReader';
 export class StaffService {
   private staffRecords: StaffRecord[] = [];
 
-  constructor(private filePath: string) {
-    this.loadStaffRecords();
-  }
+  constructor(private filePath: string) {}
 
-  private async loadStaffRecords() {
+  public async init() {
     this.staffRecords = await readCsvFile(this.filePath);
   }
 
@@ -17,3 +15,4 @@ export class StaffService {
     return record ? record.team_name : null;
   }
 }
+
