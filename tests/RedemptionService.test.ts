@@ -9,7 +9,7 @@ describe('RedemptionService', () => {
   });
 
   it('should allow a team to redeem a gift if they have not already', async () => {
-    const teamName = 'TeamA';
+    const teamName = 'TeamA' ;
     expect(await redemptionService.canRedeem(teamName)).toBe(true);
     
     // Simulate redeeming a gift

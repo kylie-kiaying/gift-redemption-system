@@ -8,8 +8,22 @@ const port = 3000;
 const staffService = new StaffService('data/test-staff-id-to-team.csv');
 const redemptionService = new RedemptionService();
 
-async function startServer() {
+// Temporary test code
+async function testStaffService() {
+  console.log("Testing StaffService...");
   await staffService.init(); 
+  const testStaffId = "1"; 
+  const teamName = staffService.getTeamNameByStaffId(testStaffId);
+  if (teamName) {
+    console.log(`Found team name for staff ID ${testStaffId}: ${teamName}`);
+  } else {
+    console.error(`No team found for staff ID ${testStaffId}`);
+  }
+}
+
+async function startServer() {
+  console.log("Server starting...");
+  await testStaffService();
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
