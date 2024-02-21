@@ -1,27 +1,80 @@
+import sqlite3 from 'sqlite3';
 import { RedemptionService } from '../src/services/RedemptionService';
+
+// Initialize the database schema
+function initializeDatabaseSchema(db: sqlite3.Database): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS redemption_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        team_name TEXT NOT NULL,
+        redeemed_at INTEGER NOT NULL
+      );
+    `;
+
+    db.run(createTableSQL, (error) => {
+      if (error) {
+        console.error('Error creating tables', error);
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
 
 describe('RedemptionService', () => {
   let redemptionService: RedemptionService;
+  let db: sqlite3.Database;
 
-  beforeEach(() => {
-    redemptionService = new RedemptionService();
-    redemptionService.clearRedemptions();
+  beforeEach(async () => {
+    // Open an in-memory SQLite database
+    db = new sqlite3.Database(':memory:', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
+    // Initialize the database schema
+    await initializeDatabaseSchema(db);
+    // Pass the database instance to the RedemptionService
+    redemptionService = new RedemptionService(db);
   });
 
-  it('should allow a team to redeem a gift if they have not already', async () => {
-    const teamName = 'TeamA' ;
-    expect(await redemptionService.canRedeem(teamName)).toBe(true);
-    
-    // Simulate redeeming a gift
-    await redemptionService.redeemGift(teamName);
-    expect(await redemptionService.canRedeem(teamName)).toBe(false);
+  afterEach(() => {
+    // Close the database after each test
+    db.close();
   });
 
-  it('should not allow a team to redeem a gift if they have already done so', async () => {
+  it('should allow a team to redeem a gift if they have not already', (done) => {
     const teamName = 'TeamA';
-    // Simulate an initial redemption
-    await redemptionService.redeemGift(teamName);
-    // Attempting another redemption should fail
-    expect(await redemptionService.canRedeem(teamName)).toBe(false);
+
+    redemptionService.canRedeem(teamName, (eligibleBefore) => {
+      // Assert the team is eligible before redemption
+      expect(eligibleBefore).toBe(true);
+
+      redemptionService.redeemGift(teamName, (success) => {
+        // Assert the redemption is successful
+        expect(success).toBe(true);
+
+        redemptionService.canRedeem(teamName, (eligibleAfter) => {
+          // Assert the team is no longer eligible after redemption
+          expect(eligibleAfter).toBe(false);
+          done();
+        });
+      });
+    });
   });
+
+  it('should not allow a team to redeem a gift if they have already redeemed one this year', (done) => {
+    const teamName = 'TeamB';
+
+    redemptionService.redeemGift(teamName, (success) => {
+      // Assert the redemption is successful
+      expect(success).toBe(true);
+
+      redemptionService.canRedeem(teamName, (eligible) => {
+        // Assert the team is not eligible to redeem again
+        expect(eligible).toBe(false);
+        done();
+      });
+    });
+  });
+
+  
 });

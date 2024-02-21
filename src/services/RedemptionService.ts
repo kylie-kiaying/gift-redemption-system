@@ -1,22 +1,26 @@
-import { db } from '../utils/database';
+import { Database } from 'sqlite3';
+import { db as defaultDb } from '../utils/database';
 import { RedemptionRecord } from '../models/RedemptionRecord';
 
 export class RedemptionService {
-  // Determine the current year
+  private db: Database;
+
+  constructor(db: Database = defaultDb) {
+    this.db = db;
+  }
+
   private getCurrentYear(): number {
     return new Date().getFullYear();
   }
 
-  // Extract the year from a timestamp
   private getYearFromTimestamp(timestamp: number): number {
     return new Date(timestamp).getFullYear();
   }
 
-  // Check if a team is eligible to redeem a gift this season (year).
   public canRedeem(teamName: string, callback: (eligible: boolean) => void): void {
     const sql = `SELECT redeemed_at FROM redemption_records WHERE team_name = ? ORDER BY redeemed_at DESC LIMIT 1`;
     
-    db.get(sql, [teamName], (err, row: RedemptionRecord) => {
+    this.db.get(sql, [teamName], (err, row: RedemptionRecord | undefined) => {
       if (err) {
         console.error('Error querying database', err.message);
         callback(false);
@@ -33,7 +37,6 @@ export class RedemptionService {
     });
   }
 
-  // Redeem a gift for a team.
   public redeemGift(teamName: string, callback: (success: boolean) => void): void {
     this.canRedeem(teamName, (eligible) => {
       if (!eligible) {
@@ -45,7 +48,7 @@ export class RedemptionService {
       const redeemedAt = Date.now();
       const sql = `INSERT INTO redemption_records (team_name, redeemed_at) VALUES (?, ?)`;
       
-      db.run(sql, [teamName, redeemedAt], function(err) {
+      this.db.run(sql, [teamName, redeemedAt], function(err) {
         if (err) {
           console.error('Error inserting redemption record', err.message);
           callback(false);
