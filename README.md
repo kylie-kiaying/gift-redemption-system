@@ -66,7 +66,7 @@ The database.ts file includes utilities for managing the database:
 
 - **Initializing Tables:** Automatically done when starting the service.
 - **Viewing Redemption Records:** Uncomment `dbInstance.showTable();` in `database.ts` to print all records.
-- Clearing Redemption Records: Uncomment `dbInstance.clearRedemptionRecords()`; in `database.ts` to clear the table.
+- **Clearing Redemption Records:** Uncomment `dbInstance.clearRedemptionRecords()`; in `database.ts` to clear the table.
 
 ## Sequence Diagram
 ![Sequence Diagram](./public/GiftRedemptionSystem.png)
