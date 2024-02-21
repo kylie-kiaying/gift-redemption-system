@@ -3,15 +3,15 @@ import { StaffService } from './services/StaffService';
 import { RedemptionService } from './services/RedemptionService';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
+// Update the path to the CSV file
 const staffService = new StaffService('data/test-staff-id-to-team.csv');
 const redemptionService = new RedemptionService();
 
-// Assuming StaffService.init and getTeamNameByStaffId are synchronous or have been updated accordingly
 async function startServer() {
   console.log("Server starting...");
-  await staffService.init(); // Ensure StaffService is properly initialized (if async)
+  await staffService.init(); 
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
