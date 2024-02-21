@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Update the path to the CSV file
-const staffService = new StaffService('data/test-staff-id-to-team.csv');
+const staffService = new StaffService('data/staff-id-to-team-mapping-long.csv');
 const redemptionService = new RedemptionService();
 
 async function startServer() {
