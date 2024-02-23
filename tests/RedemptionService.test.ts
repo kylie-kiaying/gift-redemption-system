@@ -1,7 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { RedemptionService } from '../src/services/RedemptionService';
 
-// Initialize the database schema
 function initializeDatabaseSchema(db: sqlite3.Database): Promise<void> {
   return new Promise((resolve, reject) => {
     const createTableSQL = `
@@ -28,16 +27,12 @@ describe('RedemptionService', () => {
   let db: sqlite3.Database;
 
   beforeEach(async () => {
-    // Open an in-memory SQLite database
     db = new sqlite3.Database(':memory:', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
-    // Initialize the database schema
     await initializeDatabaseSchema(db);
-    // Pass the database instance to the RedemptionService
     redemptionService = new RedemptionService(db);
   });
 
   afterEach(() => {
-    // Close the database after each test
     db.close();
   });
 
@@ -45,15 +40,15 @@ describe('RedemptionService', () => {
     const teamName = 'TeamA';
 
     redemptionService.canRedeem(teamName, (eligibleBefore) => {
-      // Assert the team is eligible before redemption
+      // Check if team is eligible before redemption
       expect(eligibleBefore).toBe(true);
 
       redemptionService.redeemGift(teamName, (success) => {
-        // Assert the redemption is successful
+        // Check if redemption is successful
         expect(success).toBe(true);
 
         redemptionService.canRedeem(teamName, (eligibleAfter) => {
-          // Assert the team is no longer eligible after redemption
+          // Check if team is no longer eligible after redemption
           expect(eligibleAfter).toBe(false);
           done();
         });
@@ -65,11 +60,11 @@ describe('RedemptionService', () => {
     const teamName = 'TeamB';
 
     redemptionService.redeemGift(teamName, (success) => {
-      // Assert the redemption is successful
+      // Check if redemption is successful
       expect(success).toBe(true);
 
       redemptionService.canRedeem(teamName, (eligible) => {
-        // Assert the team is not eligible to redeem again
+        // Check if team is not eligible to redeem again
         expect(eligible).toBe(false);
         done();
       });
